@@ -5,12 +5,14 @@ type istack[T any] interface {
 	Pop() T
 	GiveElem() T
 	Clear()
+	GiveLen() int
 }
 
 type iline[T any] interface {
 	Clear()
 	Dequeue() T
 	Enqueue(item T)
+	GiveLen() int
 }
 
 type Polish struct {

@@ -38,3 +38,7 @@ func (arr *Stack[T]) Append(item T) {
 func (arr *Stack[T]) Clear() {
 	arr.array = nil
 }
+
+func (arr *Stack[T]) GiveLen() int {
+	return len(arr.array)
+}

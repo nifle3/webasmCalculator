@@ -1,5 +1,11 @@
 package polish
 
+import (
+	"strconv"
+	"strings"
+	"unicode"
+)
+
 func (pol *Polish) CalculateExpression(expression string) float64 {
 	pol.clearAll()
 
@@ -7,9 +13,8 @@ func (pol *Polish) CalculateExpression(expression string) float64 {
 		return 0
 	}
 
-	pol.ExpressionToString(expression)
-	result := pol.CalculateString()
-
+	pol.expressionToOutlineString(expression)
+	result := pol.calculateOutlineString()
 	return result
 }
 
@@ -39,24 +44,78 @@ func (pol *Polish) CheckCorrect(expression string) bool {
 
 }
 
-func (pol *Polish) ExpressionToString(expression string) {
+func (pol *Polish) expressionToOutlineString(expression string) {
+	for i := 0; i < len(expression); i++ {
+		if unicode.IsDigit(rune(expression[i])) {
+			var digitString strings.Builder
+
+			for ; i < len(expression) && unicode.IsDigit(rune(expression[i])); i++ {
+				digitString.WriteByte(expression[i])
+			}
+
+			pol.outputLine.Enqueue(digitString.String())
+		}
+
+		if i == len(expression) {
+			break
+		}
+		current := string(expression[i])
+
+		if current == `(` {
+			pol.operatorStack.Append(string(expression[i]))
+			continue
+		}
+
+		if current == `)` {
+			for res := pol.operatorStack.Pop(); res != "("; res = pol.operatorStack.Pop() {
+				pol.outputLine.Enqueue(res)
+			}
+			continue
+		}
+
+		for pol.giveMePriority(pol.operatorStack.GiveElem()) >= pol.giveMePriority(current) {
+			elem := pol.operatorStack.Pop()
+			pol.outputLine.Enqueue(elem)
+		}
+
+		pol.operatorStack.Append(current)
+	}
+
+	for pol.operatorStack.GiveLen() != 0 {
+		pol.outputLine.Enqueue(pol.operatorStack.Pop())
+	}
 }
 
-func (pol *Polish) giveMePrioritet(s string) byte {
+func (pol *Polish) giveMePriority(s string) byte {
 	switch s {
 	case `+`, `-`:
 		return 2
 	case `*`, `/`:
 		return 3
-	case `)`:
-		return 4
+	case `(`:
+		return 1
 	default:
 		return 0
 	}
 }
 
-func (pol *Polish) CalculateString() float64 {
-	return 0
+func (pol *Polish) calculateOutlineString() float64 {
+	for pol.outputLine.GiveLen() != 0 {
+		val := pol.outputLine.Dequeue()
+
+		if value, err := strconv.ParseFloat(val, 64); err == nil {
+			pol.operandStack.Append(value)
+			continue
+		}
+
+		a := pol.operandStack.Pop()
+		b := pol.operandStack.Pop()
+
+		result := pol.doOperator(a, b, val)
+		pol.operandStack.Append(result)
+	}
+
+	return pol.operandStack.Pop()
 }
 
 func (pol *Polish) doOperator(a, b float64, operator string) float64 {

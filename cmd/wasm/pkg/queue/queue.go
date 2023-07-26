@@ -27,3 +27,7 @@ func (q *Queue[T]) Dequeue() T {
 func (q *Queue[T]) Enqueue(item T) {
 	q.line = append(q.line, item)
 }
+
+func (q *Queue[T]) GiveLen() int {
+	return len(q.line)
+}

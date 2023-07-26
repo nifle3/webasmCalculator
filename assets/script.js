@@ -1,5 +1,16 @@
 const go = new Go();
 
-WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
-    go.run(result.instance);
-});
+let mod, inst;
+WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then(
+    async result =>{
+        mod = result.module;
+        inst = result.instance;
+        await go.run(inst)
+    }
+)
+
+function CalculClick(){
+    let value = document.getElementById("inp").value
+    let result = calculatePolish(value)
+    document.getElementById("answerInput").value = result
+}

@@ -32,3 +32,6 @@
 
 # Go workspace file
 go.work
+
+wasm_exec.js
+main.wasm

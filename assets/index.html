@@ -6,7 +6,9 @@
 </head>
 <body>
     <h1>Hello wasm</h1>
-
+    <input type="text" id="inp" placeholder="expression">
+    <button onclick="CalculClick()">Click me!</button>
+    <p><input type="text" id="answerInput" readonly></p>
     <script type="text/javascript" src="wasm_exec.js"></script>
     <script type="text/javascript" src="script.js"></script>
 </body>

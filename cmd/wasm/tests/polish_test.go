@@ -3,11 +3,11 @@ package tests
 import (
 	"testing"
 	"webasm/cmd/wasm/internal/polish"
-	"webasm/cmd/wasm/pkg/outputLine"
+	"webasm/cmd/wasm/pkg/queue"
 	"webasm/cmd/wasm/pkg/stack"
 )
 
-var polska = polish.NewPolish(stack.NewStack[string](), stack.NewStack[float64](), outputLine.NewOutputLine())
+var polska = polish.NewPolish(stack.NewStack[string](), stack.NewStack[float64](), queue.NewQueue[string]())
 
 func TestCheckCorrect(t *testing.T) {
 	data := map[string]bool{

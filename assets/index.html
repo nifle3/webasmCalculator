@@ -3,13 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+        button{
+            width: 100px;
+            height: 100px;
+        }
+        #calculatorBody{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        button span {
+            font-size: 200%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello wasm</h1>
-    <input type="text" id="inp" placeholder="expression">
-    <button onclick="CalculClick()">Click me!</button>
-    <p><input type="text" id="answerInput" readonly></p>
+    <div id="calculatorBody">
+        <div>
+            <h3>{{expression}}</h3>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <td><button @click="addValue('1')" class="btn btn-primary"><span>1</span></button></td>
+                    <td><button @click="addValue('2')" class="btn btn-primary"><span>2</span></button></td>
+                    <td><button @click="addValue('3')" class="btn btn-primary"><span>3</span></button></td>
+                    <td><button @click="addValue('+')" class="btn btn-primary"><span>+</span></button></td>
+                </tr>
+                <tr>
+                    <td><button @click="addValue('4')" class="btn btn-primary"><span>4</span></button></td>
+                    <td><button @click="addValue('5')" class="btn btn-primary"><span>5</span></button></td>
+                    <td><button @click="addValue('6')" class="btn btn-primary"><span>6</span></button></td>
+                    <td><button @click="addValue('-')" class="btn btn-primary"><span>-</span></button></td>
+                </tr>
+                <tr>
+                    <td><button @click="addValue('7')" class="btn btn-primary"><span>7</span></button></td>
+                    <td><button @click="addValue('8')" class="btn btn-primary"><span>8</span></button></td>
+                    <td><button @click="addValue('9')" class="btn btn-primary"><span>9</span></button></td>
+                    <td><button @click="addValue('/')" class="btn btn-primary"><span>/</span></button></td>
+                </tr>
+                <tr>
+                    <td><button @click="clear" class="btn btn-primary"><span>С</span></button></td>
+                    <td><button @click="addValue('(')" class="btn btn-primary"><span>(</span></button></td>
+                    <td><button @click="addValue(')')" class="btn btn-primary"><span>)</span></button></td>
+                    <td><button @click="calculate" class="btn btn-primary"><span>=</span></button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
     <script type="text/javascript" src="wasm_exec.js"></script>
     <script type="text/javascript" src="script.js"></script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+        Vue.createApp({
+            data(){
+                return{
+                    expression:"",
+                }
+            },
+            methods: {
+                addValue(a){
+                    this.expression += a;
+                },
+                clear(){
+                    this.expression = this.expression.slice(0, -1);
+                },
+                calculate(){
+                    this.expression = calculatePolish(this.expression)
+                }
+            }
+        }).mount('#calculatorBody');
+    </script>
 </body>
 </html>

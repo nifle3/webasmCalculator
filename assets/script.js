@@ -8,9 +8,3 @@ WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then(
         await go.run(inst)
     }
 )
-
-function CalculClick(){
-    let value = document.getElementById("inp").value
-    let result = calculatePolish(value)
-    document.getElementById("answerInput").value = result
-}

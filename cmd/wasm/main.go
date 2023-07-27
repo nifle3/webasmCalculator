@@ -15,6 +15,6 @@ func main() {
 	polska := polish.NewPolish(stack.NewStack[string](), stack.NewStack[float64](), queue.NewQueue[string]())
 	wasm := registration.NewWasmHandler(polska)
 	wasm.Handler()
-	
+
 	<-c
 }

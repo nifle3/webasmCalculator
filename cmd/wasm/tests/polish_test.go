@@ -8,7 +8,9 @@ import (
 	"webasm/cmd/wasm/pkg/stack"
 )
 
-var polska = polish.NewPolish(stack.NewStack[string](), stack.NewStack[float64](), queue.NewQueue[string]())
+var (
+	polska = polish.NewPolish(stack.NewStack[string](), stack.NewStack[float64](), queue.NewQueue[string]())
+)
 
 func TestCheckCorrect(t *testing.T) {
 	log.Printf("start TestCheckCorrect\n")

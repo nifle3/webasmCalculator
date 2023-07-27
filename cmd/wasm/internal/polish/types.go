@@ -21,8 +21,8 @@ type Polish struct {
 	outputLine    iline[string]
 }
 
-func NewPolish(operators istack[string], operands istack[float64], outputline iline[string]) Polish {
-	return Polish{
+func NewPolish(operators istack[string], operands istack[float64], outputline iline[string]) *Polish {
+	return &Polish{
 		operatorStack: operators,
 		operandStack:  operands,
 		outputLine:    outputline,

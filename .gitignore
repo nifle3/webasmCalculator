@@ -18,6 +18,9 @@
 *.dll
 *.so
 *.dylib
+*.wasm
+
+/assets/wasm_exec.js
 
 *.yml
 

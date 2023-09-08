@@ -1,7 +1,7 @@
 package registration
 
 type Calculator interface {
-	CalculateExpression(expression string) float64
+	CalculateExpression(expression string) (float64, error)
 }
 
 type WasmHandler struct {

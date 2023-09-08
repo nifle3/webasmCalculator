@@ -1,21 +1,22 @@
 package polish
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
-func (pol *Polish) CalculateExpression(expression string) float64 {
+func (pol *Polish) CalculateExpression(expression string) (float64, error) {
 	pol.clearAll()
 
 	if !pol.CheckCorrect(expression) {
-		return 0
+		return 0, errors.New("Делить на 0 нельзя")
 	}
 
 	pol.expressionToOutlineString(expression)
 	result := pol.calculateOutlineString()
-	return result
+	return result, nil
 }
 
 func (pol *Polish) clearAll() {

@@ -13,7 +13,11 @@ func (w *WasmHandler) calculatePolish(this js.Value, args []js.Value) interface{
 		return nil
 	}
 
-	result := w.calculator.CalculateExpression(args[0].String())
+	result, err := w.calculator.CalculateExpression(args[0].String())
+	if err != nil {
+		js.Global().Call("alert", err.Error())
 
+		return 0
+	}
 	return result
 }

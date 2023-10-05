@@ -89,6 +89,10 @@
                     this.expression = "";
                 },
                 calculate(){
+                    if (this.expression == "") {
+                        return
+                    }
+
                     this.expression = calculatePolish(this.expression)
                 }
             }

@@ -78,22 +78,26 @@
         Vue.createApp({
             data(){
                 return{
+                    isAnswer: false,
                     expression:"",
                 }
             },
             methods: {
                 addValue(a){
                     this.expression += a;
+                    this.isAnswer = false;
                 },
                 clear(){
                     this.expression = "";
+                    this.isAnswer = false;
                 },
                 calculate(){
-                    if (this.expression == "") {
-                        return
+                    if (this.expression == "" || this.isAnswer) {
+                        return;
                     }
 
-                    this.expression = calculatePolish(this.expression)
+                    this.expression = calculatePolish(this.expression);
+                    this.isAnswer = true;
                 }
             }
         }).mount('#calculatorBody');

@@ -5,13 +5,21 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+	"webasm/cmd/wasm/pkg/expression"
 )
+
+var operatorsMap = map[string]interface{}{
+	"+": struct{}{},
+	"-": struct{}{},
+	"/": struct{}{},
+	"*": struct{}{},
+}
 
 func (pol *Polish) CalculateExpression(expression string) (float64, error) {
 	pol.clearAll()
 
-	if !pol.CheckCorrect(expression) {
-		return 0, errors.New("Делить на 0 нельзя")
+	if err := pol.CheckCorrect(expression); err != nil {
+		return 0, err
 	}
 
 	pol.expressionToOutlineString(expression)
@@ -25,23 +33,36 @@ func (pol *Polish) clearAll() {
 	pol.outputLine.Clear()
 }
 
-func (pol *Polish) CheckCorrect(expression string) bool {
+func (pol *Polish) CheckCorrect(outputLine string) error {
 	countBrackets := 0
-	for index, value := range expression {
-		if string(value) == "(" {
+	for index := range outputLine {
+		if string(outputLine[index]) == "(" {
 			countBrackets++
-		} else if string(value) == ")" {
+		} else if string(outputLine[index]) == ")" {
 			countBrackets--
-		} else if string(value) == "/" && index != len(expression)-1 && string(expression[index+1]) == "0" {
-			return false
+		}
+
+		if index == len(outputLine)-1 {
+			break
+		}
+
+		if string(outputLine[index]) == "/" && string(outputLine[index+1]) == "0" {
+			return errors.New(expression.ZeroExpression)
+		}
+
+		_, firstIsOperator := operatorsMap[string(outputLine[index])]
+		_, secondIsOperator := operatorsMap[string(outputLine[index+1])]
+
+		if firstIsOperator && secondIsOperator {
+			return errors.New(expression.OperatorExpression)
 		}
 	}
 
-	if countBrackets == 0 {
-		return true
-	} else {
-		return false
+	if countBrackets != 0 {
+		return errors.New(expression.BracketExpression)
 	}
+
+	return nil
 
 }
 

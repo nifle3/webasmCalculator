@@ -1,37 +1,38 @@
 package tests
 
 import (
-	"log"
+	"errors"
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"webasm/cmd/wasm/internal/polish"
+	"webasm/cmd/wasm/pkg/expression"
 	"webasm/cmd/wasm/pkg/queue"
 	"webasm/cmd/wasm/pkg/stack"
 )
 
 var (
-	polska = polish.NewPolish(stack.NewStack[string](), stack.NewStack[float64](), queue.NewQueue[string]())
+	polishVariable = polish.NewPolish(stack.NewStack[string](), stack.NewStack[float64](), queue.NewQueue[string]())
 )
 
 func TestCheckCorrect(t *testing.T) {
-	log.Printf("start TestCheckCorrect\n")
-	data := map[string]bool{
-		"1+2*((2-3)-1)":    true,
-		"1/0":              false,
-		"":                 true,
-		"1+2*(2-3":         false,
-		"1+2*3*(1+4-(5-3)": false,
+	data := map[string]error{
+		"1+2*((2-3)-1)":    nil,
+		"1/0":              errors.New(expression.ZeroExpression),
+		"":                 nil,
+		"1+2*(2-3":         errors.New(expression.BracketExpression),
+		"1+2*3*(1+4-(5-3)": errors.New(expression.BracketExpression),
+		"1---1-2-2-2--2":   errors.New(expression.OperatorExpression),
 	}
 
 	for key, value := range data {
-		result := polska.CheckCorrect(key)
-		if result != value {
-			t.Errorf("on %s :expected = %t, received = %t\n", key, value, result)
-		}
+		t.Run("test", func(t *testing.T) {
+			result := polishVariable.CheckCorrect(key)
+			assert.Equal(t, value, result)
+		})
 	}
 }
 
 func TestFullCalculate(t *testing.T) {
-	log.Printf("start TestFullCalculate\n")
 	data := map[string]float64{
 		"2+2":                 4,
 		"1-1":                 0,
@@ -44,9 +45,9 @@ func TestFullCalculate(t *testing.T) {
 	}
 
 	for key, value := range data {
-		result := polska.CalculateExpression(key)
-		if result != value {
-			t.Errorf("on %s: expected = %g, received = %g", key, value, result)
-		}
+		t.Run("testFullCalculate", func(t *testing.T) {
+			result, _ := polishVariable.CalculateExpression(key)
+			assert.Equal(t, value, result)
+		})
 	}
 }

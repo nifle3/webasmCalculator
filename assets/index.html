@@ -40,32 +40,33 @@
         <div>
             <table>
                 <tr>
-                    <td colspan="3"><button @click="calculate" class="btn btn-primary"><span>=</span></button></td>
-                    <td><button @click="clear" class="btn btn-primary"><span>С</span></button></td>
+                    <td colspan="2"><button @click="calculate()" class="btn btn-primary"><span>=</span></button></td>
+                    <td><button @click="clearLast()" class="btn btn-primary"><span>CE</span></button></td>
+                    <td><button @click="clear()" class="btn btn-primary"><span>С</span></button></td>
                 </tr>
                 <tr>
-                    <td><button @click="addValue('1')" class="btn btn-primary"><span>1</span></button></td>
-                    <td><button @click="addValue('2')" class="btn btn-primary"><span>2</span></button></td>
-                    <td><button @click="addValue('3')" class="btn btn-primary"><span>3</span></button></td>
-                    <td><button @click="addValue('+')" class="btn btn-primary"><span>+</span></button></td>
+                    <td><button @click="addOperand('1')" class="btn btn-primary"><span>1</span></button></td>
+                    <td><button @click="addOperand('2')" class="btn btn-primary"><span>2</span></button></td>
+                    <td><button @click="addOperand('3')" class="btn btn-primary"><span>3</span></button></td>
+                    <td><button @click="addOperator('+')" class="btn btn-primary"><span>+</span></button></td>
                 </tr>
                 <tr>
-                    <td><button @click="addValue('4')" class="btn btn-primary"><span>4</span></button></td>
-                    <td><button @click="addValue('5')" class="btn btn-primary"><span>5</span></button></td>
-                    <td><button @click="addValue('6')" class="btn btn-primary"><span>6</span></button></td>
-                    <td><button @click="addValue('-')" class="btn btn-primary"><span>-</span></button></td>
+                    <td><button @click="addOperand('4')" class="btn btn-primary"><span>4</span></button></td>
+                    <td><button @click="addOperand('5')" class="btn btn-primary"><span>5</span></button></td>
+                    <td><button @click="addOperand('6')" class="btn btn-primary"><span>6</span></button></td>
+                    <td><button @click="addOperator('-')" class="btn btn-primary"><span>-</span></button></td>
                 </tr>
                 <tr>
-                    <td><button @click="addValue('7')" class="btn btn-primary"><span>7</span></button></td>
-                    <td><button @click="addValue('8')" class="btn btn-primary"><span>8</span></button></td>
-                    <td><button @click="addValue('9')" class="btn btn-primary"><span>9</span></button></td>
-                    <td><button @click="addValue('/')" class="btn btn-primary"><span>/</span></button></td>
+                    <td><button @click="addOperand('7')" class="btn btn-primary"><span>7</span></button></td>
+                    <td><button @click="addOperand('8')" class="btn btn-primary"><span>8</span></button></td>
+                    <td><button @click="addOperand('9')" class="btn btn-primary"><span>9</span></button></td>
+                    <td><button @click="addOperator('/')" class="btn btn-primary"><span>/</span></button></td>
                 </tr>
                 <tr>
-                    <td><button @click="addValue(0)" class="btn btn-primary"><span>0</span></button></td>
-                    <td><button @click="addValue('(')" class="btn btn-primary"><span>(</span></button></td>
-                    <td><button @click="addValue(')')" class="btn btn-primary"><span>)</span></button></td>
-                    <td><button @click="addValue('*')" class="btn btn-primary"><span>*</span></button></td>
+                    <td><button @click="addOperand(0)" class="btn btn-primary"><span>0</span></button></td>
+                    <td><button @click="addOperator('(')" class="btn btn-primary"><span>(</span></button></td>
+                    <td><button @click="addOperator(')')" class="btn btn-primary"><span>)</span></button></td>
+                    <td><button @click="addOperator('*')" class="btn btn-primary"><span>*</span></button></td>
                 </tr>
             </table>
         </div>
@@ -78,26 +79,45 @@
         Vue.createApp({
             data(){
                 return{
+                    lastOperator: false,
                     isAnswer: false,
                     expression:"",
                 }
             },
             methods: {
-                addValue(a){
+                // Check this shit
+                clearLast(){
+                    this.expression = this.expression.slice(0, -1);
+                },
+                addOperator(a){
+                    if (this.lastOperator) {
+                        alert("this symbol must be an operand");
+                        return;
+                    }
+
+                    this.expression += a;
+                    this.lastOperator = true;
+
+                },
+                addOperand(a){
                     this.expression += a;
                     this.isAnswer = false;
+                    this.lastOperator = false;
                 },
                 clear(){
                     this.expression = "";
                     this.isAnswer = false;
+                    this.lastOperator = false;
                 },
                 calculate(){
-                    if (this.expression == "" || this.isAnswer) {
+                    if (this.expression === "" || this.isAnswer) {
+                        alert("expression should not be empty or the answer");
                         return;
                     }
 
                     this.expression = calculatePolish(this.expression);
                     this.isAnswer = true;
+                    this.lastOperator = false;  
                 }
             }
         }).mount('#calculatorBody');

@@ -76,6 +76,13 @@
     <script type="text/javascript" src="script.js"></script>
     <script src="https://unpkg.com/vue@next"></script>
     <script>
+        const operatorMaps = {
+            '+': {},
+            '-': {},
+            '*': {},
+            '/': {},
+        };
+
         Vue.createApp({
             data(){
                 return{
@@ -87,9 +94,20 @@
             methods: {
                 // Check this shit
                 clearLast(){
+                    if (this.expression[this.expression.length - 1] in operatorMaps){
+                        this.lastOperator = false;
+                    }
+
                     this.expression = this.expression.slice(0, -1);
+                    this.isAnswer = false;
                 },
                 addOperator(a){
+                    if (a == "(" || a == ")"){
+                        this.expression += a;
+                        this.isAnswer = false;
+                        return;
+                    }
+
                     if (this.lastOperator) {
                         alert("this symbol must be an operand");
                         return;
@@ -97,7 +115,7 @@
 
                     this.expression += a;
                     this.lastOperator = true;
-
+                    this.isAnswer = false;
                 },
                 addOperand(a){
                     this.expression += a;
